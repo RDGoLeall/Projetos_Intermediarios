@@ -1,0 +1,119 @@
+package GerenciadorTarefas;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+public class SistemaTarefa {
+
+    static ArrayList<Tarefa> listaTarefas = new ArrayList<>();
+    static Scanner scanner = new Scanner(System.in);
+    static final String NOME_ARQUIVO ="tarefas.txt";
+
+    public static void main(String[] args) {
+        carregarDados();
+
+        int opcao;
+
+        do{
+            System.out.println("\n -- TO-DO LIST (COM MEMÓRIA) -- ");
+            System.out.println("1- Adicionar Tarefa");
+            System.out.println("2- Listar Tarefas");
+            System.out.println("3- Remover Tarefa");
+            System.out.println("4- Sair e Salvar");
+            System.out.print(" Escolha: ");
+            opcao =scanner.nextInt();
+            scanner.nextLine();
+
+            switch(opcao){
+
+                case 1:
+                    System.out.println("Descrição da Tarefa: ");
+                    String desc = scanner.nextLine();
+                    listaTarefas.add(new Tarefa(desc));
+                    System.out.println(" Tarefa Adicionada ");
+                    break;
+                case 2:
+                    listaTarefas();
+                    break;
+                case 3:
+                    listaTarefas();
+                    System.out.println(" Digite seu ID para remover: ");
+                    int id = scanner.nextInt();
+                    if(id >= 0 && id < listaTarefas.size()){
+                        listaTarefas.remove(id);
+                        System.out.println(" Trefa Removida ");
+                    }else{
+                        System.out.println(" Id removido ");
+                    }
+                    break;
+                case 4:
+                    salvarDados();
+                    System.out.println(" Dados salvos Ate Logo ");
+                    break;
+                default:
+                    System.out.println(" Opição invalida ");
+            }
+
+
+        }while(opcao != 4);
+    }
+
+
+    public static void listaTarefas(){
+        if(listaTarefas.isEmpty()){
+            System.out.println(" Nenhuma tarefa listada ");
+        }else{
+            System.out.println(" \n --Tarefas-- ");
+            for (int i = 0; i < listaTarefas.size(); i++){
+                System.out.println(  i + "." + listaTarefas.get(i));
+            }
+        }
+
+    }
+
+    public static void salvarDados(){
+        try{
+            FileWriter writer = new FileWriter(NOME_ARQUIVO);
+            
+            for(Tarefa t : listaTarefas) {
+                writer.write(t.getDescricao() + " \n" );
+
+            }
+
+            writer.close();
+
+        }catch( IOException e ){
+            System.out.println(" Erro ao salvar arquivo ");
+        }
+    }
+    
+    public static void carregarDados(){
+        try{
+                File arquivo = new File(NOME_ARQUIVO);
+
+                if(arquivo.exists()){
+                    Scanner leitorArquivo = new Scanner (arquivo);
+
+                    while (leitorArquivo.hasNextLine()){
+                        String linha = leitorArquivo.nextLine();
+                        listaTarefas.add(new Tarefa(linha));
+                    }
+
+                    leitorArquivo.close();
+                    System.out.println(" Dados carregados com susseso ");
+                }else {
+                    System.out.println(" Nenhum aqquivo encontado. Criado nova lista ");
+                }
+        }catch(IOException e ){
+            System.out.println(" Erro ao ler arquivo " + e.getMessage());
+        }
+    }
+
+
+
+
+}
